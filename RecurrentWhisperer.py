@@ -20,7 +20,7 @@ import pdb
 import tensorflow as tf
 import numpy as np
 import numpy.random as npr
-import cPickle
+import pickle as cPickle
 import scipy.io as spio
 
 from AdaptiveLearningRate import AdaptiveLearningRate
@@ -296,7 +296,7 @@ class RecurrentWhisperer(object):
             default_hps: dict containing the integrated hyperparameters.
         '''
         default_hps = deepcopy(superclass_default_hps)
-        for key, val in subclass_default_hps.iteritems():
+        for key, val in subclass_default_hps.items():
             default_hps[key] = val
 
         return default_hps
@@ -679,7 +679,7 @@ class RecurrentWhisperer(object):
             self.train_time_offset = 0.0
         else:
             self._restore_from_checkpoint(ckpt)
-
+            self.session.run(self.epoch.assign(0))
             # Resume training timer from value at last save.
             self.train_time_offset = self.session.run(self.train_time)
 
@@ -1035,8 +1035,8 @@ class RecurrentWhisperer(object):
         checkpoint.
 
         Args:
-            model_checkpoint_path (optional): string containing a path to
-            a model checkpoint. Use this as an override if needed for
+            model_checkpoint_path (optional): string containing a path to 
+            a model checkpoint. Use this as an override if needed for 
             loading models that were saved under a different directory
             structure (e.g., on another machine).
 

@@ -9,7 +9,7 @@ Please direct correspondence to mgolub@stanford.edu.
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
-import cPickle
+import pickle as cPickle
 
 class AdaptiveLearningRate(object):
 	'''Class for managing an adaptive learning rate schedule based on the
@@ -356,7 +356,7 @@ class AdaptiveLearningRate(object):
 		'''
 		if self.verbose:
 			print('Saving AdaptiveLearningRate.')
-		file = open(save_path,'w')
+		file = open(save_path,'wb')
 		file.write(cPickle.dumps(self.__dict__))
 		file.close
 
@@ -374,7 +374,7 @@ class AdaptiveLearningRate(object):
 		'''
 		if self.verbose:
 			print('Restoring AdaptiveLearningRate.')
-		file = open(restore_path,'r')
+		file = open(restore_path,'rb')
 		restore_data = file.read()
 		file.close()
 		self.__dict__ = cPickle.loads(restore_data)

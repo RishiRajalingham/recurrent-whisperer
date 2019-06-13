@@ -14,9 +14,10 @@ import argparse
 import pdb
 from copy import deepcopy
 import hashlib
-import cPickle
+import pickle as cPickle
 from numpy import sort
 import yaml
+import numpy as np
 
 class Hyperparameters(object):
     '''A general class for managing a model's hyperparameters, default
@@ -76,7 +77,7 @@ class Hyperparameters(object):
         self._all_hps_as_dict, self._hash_hps_as_dict = \
             self._parse(hps, default_hash_hps, default_non_hash_hps)
 
-        for key, val in self._all_hps_as_dict.iteritems():
+        for key, val in self._all_hps_as_dict.items():
             setattr(self, key, val)
 
     def __dict__(self):
@@ -148,7 +149,7 @@ class Hyperparameters(object):
         for non_hash_key in default_non_hash_hps.keys():
             if non_hash_key in default_hash_hp_keys:
                 raise ValueError('Hyperparameter [%s] cannot be both hash '
-                    'and non-hash.' % key)
+                    'and non-hash.' % non_hash_key)
 
         # Combine default hash and default non-hash hps
         default_hps = default_hash_hps
@@ -160,7 +161,7 @@ class Hyperparameters(object):
 
 
         # Add non-default entries to dict for hashing
-        for key, val in input_hps.iteritems():
+        for key, val in input_hps.items():
             # Allows for 'None' to be used in command line arguments.
             if val == 'None':
                 val = None
@@ -177,7 +178,7 @@ class Hyperparameters(object):
 
                 # If this hp should be hashed and value is not default, add it
                 # to the dict for hashing
-                if (key in default_hash_hp_keys) and (val != default_hps[key]):
+                if (key in default_hash_hp_keys) and np.all(val != default_hps[key]):
                     hps_to_hash[key] = val
 
         return hps, hps_to_hash
@@ -195,7 +196,7 @@ class Hyperparameters(object):
             string of key, value pairs, sorted by key.
         '''
 
-        sorted_keys = sort(d.keys())
+        sorted_keys = sort(list(d.keys()))
         n_keys = len(sorted_keys)
 
         str_items = ['{']
@@ -231,10 +232,10 @@ class Hyperparameters(object):
             string containing 512-bit hash in hexadecimal representation.
         '''
         str_to_hash = self._sorted_str_from_dict(hps)
-
+        print(str_to_hash)
         # Generate the hash for that string
         h = hashlib.new('sha512')
-        h.update(str_to_hash)
+        h.update(str_to_hash.encode('utf-8'))
         hps_hash = h.hexdigest()
 
         return hps_hash
@@ -349,7 +350,7 @@ class Hyperparameters(object):
             Returns:
                 None.
             '''
-            for key, val in D.iteritems():
+            for key, val in D.items():
 
                 if val is None or val=='None':
                     # Don't set default. This results in default set to None.
@@ -439,7 +440,7 @@ class Hyperparameters(object):
                 return D
 
             D_unflattened = dict()
-            for key, val in D_flat.iteritems():
+            for key, val in D_flat.items():
                 # Don't need to check type here (handled by parse_helper).
                 D_unflattened = add_helper(D_unflattened, key, val)
 

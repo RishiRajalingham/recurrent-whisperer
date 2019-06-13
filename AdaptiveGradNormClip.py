@@ -7,7 +7,7 @@ Please direct correspondence to mgolub@stanford.edu.
 '''
 
 import numpy as np
-import cPickle
+import pickle as cPickle
 
 class AdaptiveGradNormClip(object):
 	"""Class for managing adaptive gradient norm clipping for stabilizing any gradient-descent-like procedure.
@@ -125,7 +125,7 @@ class AdaptiveGradNormClip(object):
 
 		if self.verbose:
 			print('Saving AdaptiveGradNormClip.')
-		file = open(save_path,'w')
+		file = open(save_path,'wb')
 		file.write(cPickle.dumps(self.__dict__))
 		file.close
 
@@ -140,7 +140,7 @@ class AdaptiveGradNormClip(object):
 		'''
 		if self.verbose:
 			print('Restoring AdaptiveGradNormClip.')
-		file = open(restore_path,'r')
+		file = open(restore_path,'rb')
 		restore_data = file.read()
 		file.close()
 		self.__dict__ = cPickle.loads(restore_data)
